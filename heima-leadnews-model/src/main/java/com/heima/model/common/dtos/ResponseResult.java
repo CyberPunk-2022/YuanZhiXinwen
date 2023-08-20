@@ -14,9 +14,9 @@ import java.util.Map;
  * @param <T>
  */
 public class ResponseResult<T> implements Serializable {
-
+    // IP地址
     private String host;
-
+    // 响应码
     private Integer code;
 
     private String errorMessage;

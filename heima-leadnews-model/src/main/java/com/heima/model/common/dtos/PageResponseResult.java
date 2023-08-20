@@ -3,7 +3,9 @@ package com.heima.model.common.dtos;
 import java.io.Serializable;
 
 public class PageResponseResult extends ResponseResult implements Serializable {
+    // 当前页
     private Integer currentPage;
+    // 每页显示条数
     private Integer size;
     private Integer total;
 

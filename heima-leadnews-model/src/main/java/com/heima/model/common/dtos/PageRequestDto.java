@@ -3,6 +3,9 @@ package com.heima.model.common.dtos;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 分页查询封装
+ */
 @Data
 @Slf4j
 public class PageRequestDto {

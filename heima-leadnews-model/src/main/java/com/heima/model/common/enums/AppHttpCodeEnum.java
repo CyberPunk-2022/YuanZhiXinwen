@@ -26,8 +26,9 @@ public enum AppHttpCodeEnum {
     // 数据错误 3000~3500
     NO_OPERATOR_AUTH(3000,"无权限操作"),
     NEED_ADMIND(3001,"需要管理员权限");
-
+    // 响应码
     int code;
+    // 报错信息
     String errorMessage;
 
     AppHttpCodeEnum(int code, String errorMessage){

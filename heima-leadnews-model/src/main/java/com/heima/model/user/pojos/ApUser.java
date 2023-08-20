@@ -13,8 +13,6 @@ import java.util.Date;
  * <p>
  * APP用户信息表
  * </p>
- *
- * @author itheima
  */
 @Data
 @TableName("ap_user")
@@ -25,7 +23,7 @@ public class ApUser implements Serializable {
     /**
      * 主键
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)// 主键自增
     private Integer id;
 
     /**
@@ -60,8 +58,8 @@ public class ApUser implements Serializable {
 
     /**
      * 0 男
-            1 女
-            2 未知
+       1 女
+       2 未知
      */
     @TableField("sex")
     private Boolean sex;
@@ -81,15 +79,15 @@ public class ApUser implements Serializable {
 
     /**
      * 0正常
-            1锁定
+       1锁定
      */
     @TableField("status")
     private Boolean status;
 
     /**
      * 0 普通用户
-            1 自媒体人
-            2 大V
+       1 自媒体人
+       2 大V
      */
     @TableField("flag")
     private Short flag;

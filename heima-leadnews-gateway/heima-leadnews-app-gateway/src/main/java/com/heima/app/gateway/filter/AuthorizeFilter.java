@@ -20,28 +20,28 @@ import reactor.core.publisher.Mono;
 public class AuthorizeFilter implements Ordered, GlobalFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        //1.获取request和response对象
+        // 1.获取request和response对象
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
 
-        //2.判断是否是登录
+        // 2.判断是否是登录
         if(request.getURI().getPath().contains("/login")){
-            //放行
+            // 放行
             return chain.filter(exchange);
         }
 
-
-        //3.获取token
+        // 3.获取token
         String token = request.getHeaders().getFirst("token");
 
-        //4.判断token是否存在
+        // 4.判断token是否存在
         if(StringUtils.isBlank(token)){
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
-            return response.setComplete();
+            return response.setComplete();// 结束这次请求
         }
 
         //5.判断token是否有效
         try {
+            // 解析当前token中的数据
             Claims claimsBody = AppJwtUtil.getClaimsBody(token);
             //是否是过期
             int result = AppJwtUtil.verifyToken(claimsBody);
@@ -50,6 +50,7 @@ public class AuthorizeFilter implements Ordered, GlobalFilter {
                 return response.setComplete();
             }
         }catch (Exception e){
+            // 解析失败，返回401
             e.printStackTrace();
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return response.setComplete();
@@ -67,4 +68,6 @@ public class AuthorizeFilter implements Ordered, GlobalFilter {
     public int getOrder() {
         return 0;
     }
+
+    
 }

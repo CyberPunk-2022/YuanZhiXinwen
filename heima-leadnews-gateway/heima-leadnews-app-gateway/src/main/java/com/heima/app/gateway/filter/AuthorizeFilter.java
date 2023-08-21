@@ -69,5 +69,5 @@ public class AuthorizeFilter implements Ordered, GlobalFilter {
         return 0;
     }
 
-    
+
 }

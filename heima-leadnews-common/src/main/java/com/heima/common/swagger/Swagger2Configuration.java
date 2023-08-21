@@ -1,9 +1,10 @@
 package com.heima.common.swagger;
 
-import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -34,8 +35,8 @@ public class Swagger2Configuration {
     }
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("黑马头条API文档")
-                .description("黑马头条API文档")
+                .title("沅芷新闻I文档")
+                .description("沅芷新闻API文档")
                 .version("1.0")
                 .build();
     }

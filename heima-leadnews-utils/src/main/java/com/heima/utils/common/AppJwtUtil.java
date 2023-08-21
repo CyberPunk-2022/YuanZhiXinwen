@@ -16,6 +16,12 @@ public class AppJwtUtil {
     private static final int REFRESH_TIME = 300;
 
     // 生产ID
+
+    /**
+     * 只要传一个id 就能生成token
+     * @param id 用户id
+     * @return token
+     */
     public static String getToken(Long id){
         Map<String, Object> claimMaps = new HashMap<>();
         claimMaps.put("id",id);
@@ -24,7 +30,7 @@ public class AppJwtUtil {
                 .setId(UUID.randomUUID().toString())
                 .setIssuedAt(new Date(currentTime))  //签发时间
                 .setSubject("system")  //说明
-                .setIssuer("heima") //签发者信息
+                .setIssuer("yuanzhixinwen") //签发者信息
                 .setAudience("app")  //接收用户
                 .compressWith(CompressionCodecs.GZIP)  //数据压缩方式
                 .signWith(SignatureAlgorithm.HS512, generalKey()) //加密方式

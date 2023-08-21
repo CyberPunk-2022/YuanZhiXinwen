@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/login")
-@Api(value = "app端用户登录",tags = "app端用户登录")
+@Api(value = "app端用户登录", tags = "app端用户登录")
 public class ApUserLoginController {
 
     @Autowired
@@ -22,8 +22,8 @@ public class ApUserLoginController {
 
     @PostMapping("/login_auth")
     @ApiOperation("用户登录")
-    public ResponseResult login(@RequestBody LoginDto dto){
+    public ResponseResult login(@RequestBody LoginDto dto) {
         return apUserService.login(dto);
     }
-    
+
 }

@@ -1,6 +1,5 @@
 package com.heima.app.gateway.filter;
 
-
 import com.heima.app.gateway.util.AppJwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;

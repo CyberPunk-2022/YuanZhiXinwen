@@ -1,0 +1,72 @@
+{
+  "groups": [
+    {
+      "name": "aliyun",
+      "type": "com.heima.common.aliyun.GreenImageScan",
+      "sourceType": "com.heima.common.aliyun.GreenImageScan"
+    },
+    {
+      "name": "aliyun",
+      "type": "com.heima.common.aliyun.GreenTextScan",
+      "sourceType": "com.heima.common.aliyun.GreenTextScan"
+    },
+    {
+      "name": "baidu",
+      "type": "com.heima.common.baidu.service.BaiduCensorService",
+      "sourceType": "com.heima.common.baidu.service.BaiduCensorService"
+    }
+  ],
+  "properties": [
+    {
+      "name": "aliyun.access-key-id",
+      "type": "java.lang.String",
+      "sourceType": "com.heima.common.aliyun.GreenImageScan"
+    },
+    {
+      "name": "aliyun.access-key-id",
+      "type": "java.lang.String",
+      "sourceType": "com.heima.common.aliyun.GreenTextScan"
+    },
+    {
+      "name": "aliyun.scenes",
+      "type": "java.lang.String",
+      "sourceType": "com.heima.common.aliyun.GreenImageScan"
+    },
+    {
+      "name": "aliyun.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.heima.common.aliyun.GreenImageScan"
+    },
+    {
+      "name": "aliyun.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.heima.common.aliyun.GreenTextScan"
+    },
+    {
+      "name": "baidu.a-p-i-key",
+      "type": "java.lang.String",
+      "sourceType": "com.heima.common.baidu.service.BaiduCensorService"
+    },
+    {
+      "name": "baidu.app-i-d",
+      "type": "java.lang.String",
+      "sourceType": "com.heima.common.baidu.service.BaiduCensorService"
+    },
+    {
+      "name": "baidu.censor-client",
+      "type": "com.baidu.aip.contentcensor.AipContentCensor",
+      "sourceType": "com.heima.common.baidu.service.BaiduCensorService"
+    },
+    {
+      "name": "baidu.file-storage-service",
+      "type": "com.heima.file.service.FileStorageService",
+      "sourceType": "com.heima.common.baidu.service.BaiduCensorService"
+    },
+    {
+      "name": "baidu.secret-key",
+      "type": "java.lang.String",
+      "sourceType": "com.heima.common.baidu.service.BaiduCensorService"
+    }
+  ],
+  "hints": []
+}

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -19,9 +20,10 @@ import java.util.Date;
 
 @Data
 @TableName("ap_article")
+@Accessors(chain = true)
 public class ApArticle implements Serializable {
 
-    @TableId(value = "id",type = IdType.ID_WORKER)
+    @TableId(value = "id",type = IdType.ID_WORKER)// 雪花算法分布式主键
     private Long id;
 
 

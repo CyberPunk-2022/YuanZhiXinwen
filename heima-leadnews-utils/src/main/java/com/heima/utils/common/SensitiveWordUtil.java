@@ -5,7 +5,7 @@ import java.util.*;
 
 public class SensitiveWordUtil {
 
-    public static Map<String, Object> dictionaryMap = new HashMap<>();
+    public static Map<String, Object> dictionaryMap ;
 
 
     /**
@@ -15,7 +15,7 @@ public class SensitiveWordUtil {
      */
     public static void initMap(Collection<String> words) {
         if (words == null) {
-            System.out.println("敏感词列表不能为空");
+            System.out.println("敏感词列表为空");
             return ;
         }
 

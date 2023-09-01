@@ -21,6 +21,7 @@ import com.heima.utils.thread.WmThreadLocalUtil;
 import com.heima.wemedia.mapper.WmMaterialMapper;
 import com.heima.wemedia.mapper.WmNewsMapper;
 import com.heima.wemedia.mapper.WmNewsMaterialMapper;
+import com.heima.wemedia.service.WmNewsAutoScanService;
 import com.heima.wemedia.service.WmNewsService;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,9 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
 
     @Autowired
     private WmMaterialMapper wmMaterialMapper;
+
+    @Autowired
+    private WmNewsAutoScanService wmNewsAutoScanService;
 
     /**
      * 发布修改文章或保存为草稿
@@ -90,6 +94,9 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
 
         // 如果当面布局时自动需要自动匹配封面图片
         saveRelativeInfoForCover(dto, wmNews, materials);
+
+        // 审核
+        wmNewsAutoScanService.autoScanWmNews(wmNews.getId());
 
         return ResponseResult.okResult(AppHttpCodeEnum.SUCCESS);
     }
@@ -148,7 +155,7 @@ public class WmNewsServiceImpl extends ServiceImpl<WmNewsMapper, WmNews> impleme
      */
     //@Transactional
     private void saveRelativeInfo(List<String> materials, Integer newsId, Short type) {
-        if (materials != null && materials.isEmpty()) {
+        if (materials != null && !materials.isEmpty()) {
             // 通过图片url查询素材id
             List<WmMaterial> dbMaterials = wmMaterialMapper.selectList(Wrappers.<WmMaterial>lambdaQuery()
                     .in(WmMaterial::getUrl, materials));

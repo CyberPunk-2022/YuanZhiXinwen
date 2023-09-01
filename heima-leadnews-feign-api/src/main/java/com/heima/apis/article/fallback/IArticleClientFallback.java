@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class IArticleClientFallback implements IArticleClient {
     @Override
     public ResponseResult saveArticle(ArticleDto dto)  {
+        System.out.println("55555555555555555555555555555555555555555555555");
         return ResponseResult.errorResult(AppHttpCodeEnum.SERVER_ERROR,"获取数据失败");
     }
 }

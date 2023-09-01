@@ -1,6 +1,7 @@
 package com.heima.wemedia.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.heima.apis.article.IArticleClient;
 import com.heima.common.baidu.service.BaiduCensorService;
 import com.heima.file.service.FileStorageService;
@@ -8,18 +9,24 @@ import com.heima.model.article.dtos.ArticleDto;
 import com.heima.model.common.dtos.ResponseResult;
 import com.heima.model.wemedia.pojos.WmChannel;
 import com.heima.model.wemedia.pojos.WmNews;
+import com.heima.model.wemedia.pojos.WmSensitive;
 import com.heima.model.wemedia.pojos.WmUser;
+import com.heima.utils.common.SensitiveWordUtil;
 import com.heima.wemedia.mapper.WmChannelMapper;
 import com.heima.wemedia.mapper.WmNewsMapper;
+import com.heima.wemedia.mapper.WmSensitiveMapper;
 import com.heima.wemedia.mapper.WmUserMapper;
 import com.heima.wemedia.service.WmNewsAutoScanService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +35,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
+
+
+
+
+    @Autowired
+    private WmSensitiveMapper wmSensitiveMapper;
+
     @Autowired
     private BaiduCensorService baiduCensorService;
 
@@ -37,6 +51,8 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
     @Autowired
     private WmNewsMapper wmNewsMapper;
 
+
+
     @Autowired
     private IArticleClient articleClient;
 
@@ -45,6 +61,16 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
 
     @Autowired
     private WmUserMapper wmUserMapper;
+    @PostConstruct
+    public void initSensitiveMap(){
+        // 获取所有敏感词
+        List<WmSensitive> wmSensitives = wmSensitiveMapper.selectList(Wrappers.<WmSensitive>lambdaQuery()
+                .select(WmSensitive::getSensitives));
+        List<String> sensitiveList = wmSensitives.stream().map(WmSensitive::getSensitives).collect(Collectors.toList());
+
+        // 初始化敏感词库
+        SensitiveWordUtil.initMap(sensitiveList);
+    }
 
     /**
      * 自媒体文章审核
@@ -52,6 +78,7 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
      * @param id 文章id
      */
     @Override
+    @Async // 异步方法
     public void autoScanWmNews(Integer id) {
         // 查询自媒体文章
         WmNews wmNews = wmNewsMapper.selectById(id);
@@ -62,12 +89,14 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
             // 从内容中提取纯文本内容和图片
             Map<String, Object> textAndImages = handleTextAndImages(wmNews);
 
+            // 自管理敏感词过滤
+            boolean isPassSensitive=handleSensitiveScan((String) textAndImages.get("content"), wmNews);
+            if(!isPassSensitive) return;
+
 
             // 审核文本内容
             boolean isTextScan = handleTextScan((String) textAndImages.get("content"), wmNews);
-            if (!isTextScan) {
-                return;
-            }
+            if (!isTextScan) return;
 
 
             // 审核图片内容
@@ -85,6 +114,24 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
             updateWmNews(wmNews,WmNews.Status.PUBLISHED.getCode(),"审核成功");
         }
 
+    }
+
+    /**
+     * 自管理敏感词审核
+     * @param content
+     * @param wmNews
+     * @return
+     */
+    private boolean handleSensitiveScan(String content, WmNews wmNews) {
+        boolean flag=true;
+
+        // 查看文章是否包含敏感词
+        Map<String, Integer> map = SensitiveWordUtil.matchWords(content);
+        if(map.size()>0){
+            updateWmNews(wmNews,(short) 2,"当前文章中存在违规内容"+map);
+            flag=false;
+        }
+        return flag;
     }
 
     /**
@@ -114,7 +161,8 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
         }
         dto.setCreatedTime(new Date());
 
-        return articleClient.saveArticle(dto);
+        ResponseResult responseResult = articleClient.saveArticle(dto);
+        return responseResult;
 
     }
 

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.heima.apis.article.IArticleClient;
 import com.heima.common.baidu.service.BaiduCensorService;
+import com.heima.common.tess4j.Tess4jClient;
 import com.heima.file.service.FileStorageService;
 import com.heima.model.article.dtos.ArticleDto;
 import com.heima.model.common.dtos.ResponseResult;
@@ -27,6 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,6 +65,9 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
 
     @Autowired
     private WmUserMapper wmUserMapper;
+
+    @Autowired
+    private Tess4jClient tess4jClient;
     @PostConstruct
     public void initSensitiveMap(){
         // 获取所有敏感词
@@ -74,7 +81,6 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
 
     /**
      * 自媒体文章审核
-     *
      * @param id 文章id
      */
     @Override
@@ -180,13 +186,28 @@ public class WmNewsAutoScanServiceImpl implements WmNewsAutoScanService {
             return true;
         }
 
-        // 去重
-        images = images.stream().distinct().collect(Collectors.toList());
         List<byte[]> imageList = new ArrayList<>();
-        for (String image : images) {
-            byte[] bytes = fileStorageService.downLoadFile(image);
-            imageList.add(bytes);
+        try {
+            // 去重
+            images = images.stream().distinct().collect(Collectors.toList());
+
+            for (String image : images) {
+                byte[] bytes = fileStorageService.downLoadFile(image);
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+                BufferedImage bufferedImage = ImageIO.read(byteArrayInputStream);
+                // OCR图片识别
+                String result = tess4jClient.doOCR(bufferedImage);
+                boolean isPassSensitive = handleSensitiveScan(result, wmNews);
+
+                if(!isPassSensitive) return false;
+
+                imageList.add(bytes);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
+
 
 
         try {

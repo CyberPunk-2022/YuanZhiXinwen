@@ -10,3 +10,6 @@ spring:
       config:
         server-addr: nacos-server:8848
         file-extension: yml
+tess4j:
+  data-path: D:\workspace\tessdata
+  language: chi_sim
